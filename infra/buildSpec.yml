@@ -9,10 +9,10 @@ env:
 phases:
   install:
     commands:
-      - echo Install phase:\ ensure aws cli available
-      - if ! command -v aws &> /dev/null; then echo "'AWS cli' not found. Please install it"; exit 1; fi
-      - echo "AWS cli version:"aws --version
-      - echo "Docker version:" && docker --version
+      - echo Install phase, ensure aws cli available
+      - command -v aws || (echo "'AWS cli' not found. Please install it"; exit 1)
+      - echo aws --version
+      - echo docker --version
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
