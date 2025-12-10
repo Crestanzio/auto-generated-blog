@@ -8,7 +8,8 @@ set -e
 ################################################################################
 
 REPO_URL="https://github.com/crestanzio/auto-generated-blog.git"
-REPO_DIR="$HOME/blog"
+PROJECT="blog"
+REPO_DIR="$HOME/$PROJECT"
 
 ################################################################################
 #                                                                              #
@@ -17,7 +18,7 @@ REPO_DIR="$HOME/blog"
 ################################################################################
 
 echo "Updating system packages..."
-sudo apt update && sudo apt upgrade -y -qq
+sudo apt update -qq && sudo apt upgrade -y -qq
 
 ################################################################################
 #                                                                              #
@@ -85,4 +86,4 @@ else
 fi
 
 echo "EC2 instance initialized successfully."
-echo To deploy the app, run the command: 'cd $REPO_DIR && ./infra/scripts/deploy.sh'"
+echo "To deploy the app run: 'cd ./$PROJECT/infra/scripts/deploy.sh'"

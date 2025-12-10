@@ -12,12 +12,8 @@ phases:
       docker: 24
     commands:
       - echo Install phase: ensure aws cli available
-      - if ! command -v aws &> /dev/null; then
-          echo "'aws cli' not found. Pleace install it and try again";
-          exit 1;
-        else
-          aws --version;
-        fi
+      - if ! command -v aws &> /dev/null; then echo "'aws cli' not found. Please install it"; exit 1; fi
+      - aws --version
       - echo "Docker version:" && docker --version
   pre_build:
     commands:
