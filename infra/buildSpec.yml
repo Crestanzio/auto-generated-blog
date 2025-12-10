@@ -20,10 +20,10 @@ phases:
   build:
     commands:
       - echo "Building images..."
-      - docker compose build
+      - docker compose -f infra/docker-compose.yml build
 
   post_build:
     commands:
       - echo "Pushing images to ECR..."
-      - docker compose -f docker-compose.yml push
+      - docker compose -f infra/docker-compose.yml push
       - echo "Images pushed successfully."
