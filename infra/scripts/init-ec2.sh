@@ -17,33 +17,7 @@ REPO_DIR="$HOME/blog"
 ################################################################################
 
 echo "Updating system packages..."
-sudo apt update && sudo apt upgrade -y
-
-################################################################################
-#                                                                              #
-#                                    DOCKER                                    #
-#                                                                              #
-################################################################################
-
-if ! command -v docker &> /dev/null
-then
-  echo "Installing Docker..."
-
-  # get key
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-  
-  # write the signed
-  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-       https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \
-       sudo tee /etc/apt/sources.list.d/docker.list.distUpgrade
-  
-  sudo apt install docker-ce docker-ce-cli containerd.io
-  
-  # give permissions
-  sudo groupadd docker
-  sudo usermod -aG docker $USER
-  sudo systemctl start docker
-fi
+sudo apt update && sudo apt upgrade -y -qq
 
 ################################################################################
 #                                                                              #
@@ -51,13 +25,48 @@ fi
 #                                                                              #
 ################################################################################
 
-if ! command -v aws &> /dev/null
-then
+if ! which aws &> /dev/null; then
   echo "Installing AWS CLI..."
   curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-  python3 -m zipfile -e awscliv2.zip ./aws
+  
+  sudo apt install -y -qq unzip
+  unzip awscliv2.zip
   sudo ./aws/install
   rm -rf aws awscliv2.zip
+fi
+
+################################################################################
+#                                                                              #
+#                                    DOCKER                                    #
+#                                                                              #
+################################################################################
+
+if ! which docker &> /dev/null; then
+  file="/etc/apt/sources.list.d/docker.sources"
+  ubuntu=$(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+  
+  echo "Installing Docker..."
+
+  # get key
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  
+  # create source file
+  echo "Types: deb"                                     | sudo tee -a $file > /dev/null
+  echo "URIs: https://download.docker.com/linux/ubuntu" | sudo tee -a $file > /dev/null
+  echo "Suites: $ubuntu"                                | sudo tee -a $file > /dev/null
+  echo "Components: stable"                             | sudo tee -a $file > /dev/null
+  echo "Signed-By: /etc/apt/keyrings/docker.gpg"        | sudo tee -a $file > /dev/null
+
+  # install docker packages
+  sudo apt update -y -qq
+  sudo apt install -y -qq docker-ce docker-ce-cli containerd.io
+
+  # start service
+  sudo systemctl enable --now docker
+  
+  # give sudo permissions
+  sudo groupadd -f docker
+  sudo usermod -aG docker $USER
 fi
 
 ################################################################################
