@@ -1,7 +1,7 @@
 services:
   backend:
     container_name: backend
-    image: backend
+    image: ${BACKEND}:${IMAGE_TAG}
     build:
       context: ../backend
     environment:
@@ -15,7 +15,7 @@ services:
       - ../backend/db.sqlite:/app/db.sqlite
   frontend:
     container_name: frontend
-    image: frontend
+    image: ${FRONTEND}:${IMAGE_TAG}
     build:
       context: ../frontend
       args:

@@ -17,49 +17,52 @@ REPO_DIR="$HOME/blog"
 ################################################################################
 
 echo "Updating system packages..."
-sudo apt-get update -y
-sudo apt-get upgrade -y
+sudo apt update && sudo apt upgrade -y
 
-echo "Installing required packages..."
-sudo apt-get install -y \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    software-properties-common \
-    gnupg \
-    lsb-release \
-    unzip \
-    git
+################################################################################
+#                                                                              #
+#                                    DOCKER                                    #
+#                                                                              #
+################################################################################
 
-echo "Installing Docker..."
 if ! command -v docker &> /dev/null
 then
-    curl -fsSL https://get.docker.com -o get-docker.sh
-    sh get-docker.sh
-    sudo usermod -aG docker $USER
-fi
+  echo "Installing Docker..."
 
-echo "Installing Docker Compose..."
-if ! command -v docker-compose &> /dev/null
-then
-    DOCKER_COMPOSE_VERSION="2.20.2"
-    sudo curl -L "https://github.com/docker/compose/releases/download/v${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" \
-        -o /usr/local/bin/docker-compose
-    sudo chmod +x /usr/local/bin/docker-compose
-fi
-
-echo "Installing AWS CLI..."
-if ! command -v aws &> /dev/null
-then
-    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-    unzip awscliv2.zip
-    sudo ./aws/install
-    rm -rf aws awscliv2.zip
+  # get key
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  
+  # write the signed
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+       https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \
+       sudo tee /etc/apt/sources.list.d/docker.list.distUpgrade
+  
+  sudo apt install docker-ce docker-ce-cli containerd.io
+  
+  # give permissions
+  sudo groupadd docker
+  sudo usermod -aG docker $USER
+  sudo systemctl start docker
 fi
 
 ################################################################################
 #                                                                              #
-#                                 DEPENDENCIES                                 #
+#                                    AWS CLI                                   #
+#                                                                              #
+################################################################################
+
+if ! command -v aws &> /dev/null
+then
+  echo "Installing AWS CLI..."
+  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  python3 -m zipfile -e awscliv2.zip ./aws
+  sudo ./aws/install
+  rm -rf aws awscliv2.zip
+fi
+
+################################################################################
+#                                                                              #
+#                                     REPO                                     #
 #                                                                              #
 ################################################################################
 
