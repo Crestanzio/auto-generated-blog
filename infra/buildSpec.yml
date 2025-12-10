@@ -1,14 +1,19 @@
 version: 0.2
 
-env:
-  variables:
-    BACKEND: $ECR_URI/backend
-    FRONTEND: $ECR_URI/frontend
-    IMAGE_TAG: latest
-
 phases:
   install:
     commands:
+      - export IMAGE_TAG="latest"
+      - export BACKEND=$ECR_URI/backend
+      - export FRONTEND=$ECR_URI/frontend
+      - export FRONTEND_HOST=$FRONTEND_HOST
+      - export FRONTEND_PORT=$FRONTEND_PORT
+      - export BACKEND_HOST=$BACKEND_HOST
+      - export BACKEND_PORT=$BACKEND_PORT
+      - export VITE_API_URL=$VITE_API_URL
+      - export ARTICLE_JOB=$ARTICLE_JOB
+      - export HF_TOKEN=$HF_TOKEN
+
       - echo Install phase, ensure aws cli available
       - command -v aws || (echo "'AWS cli' not found. Please install it"; exit 1)
       - echo aws --version
