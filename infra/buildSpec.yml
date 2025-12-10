@@ -8,12 +8,10 @@ env:
 
 phases:
   install:
-    runtime-versions:
-      docker: 24
     commands:
       - echo Install phase:\ ensure aws cli available
-      - if ! command -v aws &> /dev/null; then echo "'aws cli' not found. Please install it"; exit 1; fi
-      - aws --version
+      - if ! command -v aws &> /dev/null; then echo "'AWS cli' not found. Please install it"; exit 1; fi
+      - echo "AWS cli version:"aws --version
       - echo "Docker version:" && docker --version
   pre_build:
     commands:
