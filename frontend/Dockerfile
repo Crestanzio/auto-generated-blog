@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1.5
-
 # Stage 1: Build
 FROM node:20-alpine AS build
 WORKDIR /app
@@ -17,6 +15,13 @@ RUN npm run build
 FROM node:20-alpine AS production
 WORKDIR /app
 
-COPY --exclude=src --from=build /app ./
+# COPY --exclude=src --from=build /app ./
+
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/package*.json ./package*.json
+COPY --from=build /app/vite.config.js ./vite.config.js
+COPY --from=build /app/index.html ./index.html
+COPY --from=build /app/public ./public
+COPY --from=build /app/build ./build
 
 CMD ["sh", "-c", "npm run preview -- --host $HOST --port $PORT"]
