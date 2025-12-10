@@ -1,0 +1,1 @@
+INSERT INTO articles (id, created_at, title, content) VALUES (?, ?, ?, ?);

@@ -1,0 +1,33 @@
+services:
+  backend:
+    container_name: backend
+    image: backend
+    build:
+      context: ../backend
+    environment:
+      - HOST=${BACKEND_HOST}
+      - PORT=${BACKEND_PORT}
+      - ARTICLE_JOB=${ARTICLE_JOB}
+      - HF_TOKEN=${HF_TOKEN}
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    volumes:
+      - ../backend/db.sqlite:/app/db.sqlite
+  frontend:
+    container_name: frontend
+    image: frontend
+    build:
+      context: ../frontend
+      args:
+        - VITE_API_URL=${VITE_API_URL}
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    environment:
+      - HOST=${FRONTEND_HOST}
+      - PORT=${FRONTEND_PORT}
+    depends_on:
+      - backend
+
+networks:
+  default:
+    name: blog

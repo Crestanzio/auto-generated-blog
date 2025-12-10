@@ -1,0 +1,42 @@
+version: 0.2
+
+env:
+  variables:
+    BACKEND: $ECR_URI/backend
+    FRONTEND: $ECR_URI/frontend
+    IMAGE_TAG: latest
+
+phases:
+  install:
+    runtime-versions:
+      docker: 24
+    commands:
+      - echo Install phase: ensure aws cli available
+      - if ! command -v aws &> /dev/null; then
+          echo "'aws cli' not found. Pleace install it and try again";
+          exit 1;
+        else
+          aws --version;
+        fi
+      - echo "Docker version:" && docker --version
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_URI
+  build:
+    commands:
+      - echo "Building backend image..."
+      - docker build -t backend ../backend
+      - echo "Tagging backend image for ECR..."
+      - docker tag backend:${IMAGE_TAG} $BACKEND:${IMAGE_TAG}
+
+      - echo "Building frontend image..."
+      - docker build --build-arg VITE_API_URL=${VITE_API_URL} -t frontend ../frontend
+      - echo "Tagging frontend image for ECR..."
+      - docker tag frontend:${IMAGE_TAG} $FRONTEND:${IMAGE_TAG}
+  post_build:
+    commands:
+      - echo Pushing backend image to ECR...
+      - docker push $BACKEND:${IMAGE_TAG}
+      - echo Pushing frontend image to ECR...
+      - docker push $FRONTEND:${IMAGE_TAG}
