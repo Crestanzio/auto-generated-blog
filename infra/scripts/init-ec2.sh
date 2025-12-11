@@ -18,7 +18,7 @@ REPO_DIR="$HOME/$PROJECT"
 ################################################################################
 
 echo "Updating system packages..."
-sudo apt update -qq && sudo apt upgrade -y -qq
+sudo apt update && sudo apt upgrade -y
 
 ################################################################################
 #                                                                              #
@@ -59,8 +59,8 @@ if ! which docker &> /dev/null; then
   echo "Signed-By: /etc/apt/keyrings/docker.gpg"        | sudo tee -a $file > /dev/null
 
   # install docker packages
-  sudo apt update -y -qq
-  sudo apt install -y -qq docker-ce docker-ce-cli containerd.io
+  sudo apt update -y
+  sudo apt install -y docker-ce docker-ce-cli containerd.io
 
   # start service
   sudo systemctl enable --now docker
@@ -70,20 +70,4 @@ if ! which docker &> /dev/null; then
   sudo usermod -aG docker $USER
 fi
 
-################################################################################
-#                                                                              #
-#                                     REPO                                     #
-#                                                                              #
-################################################################################
-
-if [ ! -d "$REPO_DIR" ]; then
-    echo "Cloning repo into $REPO_DIR..."
-    git clone $REPO_URL $REPO_DIR
-else
-    echo "Repo already exists at $REPO_DIR. Pulling latest changes..."
-    cd $REPO_DIR
-    git pull
-fi
-
 echo "EC2 instance initialized successfully."
-echo "To deploy the app run: 'cd ./$PROJECT/infra/scripts/deploy.sh'"
