@@ -13,7 +13,7 @@ cd "$(dirname "$0")"
 # get variables from codebuild
 eval "$(aws codebuild batch-get-projects --names "blog-codebuild" \
   --query "projects[0].environment.environmentVariables" \
-  --output json | jq -r '.[] | "\(.name)=\"\(.value)\""' )"
+  --output json | jq -r '.[] | "export \(.name)=\"\(.value)\""' )"
 
 FRONTEND="$ECR_URI/frontend:latest"
 BACKEND="$ECR_URI/backend:latest"
