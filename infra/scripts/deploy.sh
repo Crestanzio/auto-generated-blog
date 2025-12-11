@@ -32,5 +32,11 @@ docker pull $BACKEND
 docker pull $FRONTEND
 
 # start docker images
-docker compose -f ../docker-compose.yml down
-docker compose -f ../docker-compose.yml up -d
+
+if [ ! -f ../docker-compose.yml ]; then
+  docker compose -f <(curl -fsSL https://raw.githubusercontent.com/Crestanzio/auto-generated-blog/master/docker-compose.yml) down
+  docker compose -f <(curl -fsSL https://raw.githubusercontent.com/Crestanzio/auto-generated-blog/master/docker-compose.yml) up -d
+else
+  docker compose -f ../docker-compose.yml down
+  docker compose -f ../docker-compose.yml up -d
+fi
