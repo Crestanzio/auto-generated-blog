@@ -6,12 +6,8 @@ export default defineConfig({
   plugins: [react()],
   build  : { outDir: "build" },
   preview: {
-    port: 4173,
-    host: '0.0.0.0'
+    allowedHosts: [
+      'ec2-51-21-250-199.eu-north-1.compute.amazonaws.com'
+    ],
   },
-  server: {
-    fs: {
-      strict: false
-    }
-  }
 })
