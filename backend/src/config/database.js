@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 
 const rootDir    = process.cwd();
-const dbFile     = path.join(rootDir, 'db.sqlite');
+const dbFile     = path.join(rootDir, 'database/db.sqlite');
 
 function getQueries() {
   const queriesPath = path.join(rootDir, 'src/config/queries');

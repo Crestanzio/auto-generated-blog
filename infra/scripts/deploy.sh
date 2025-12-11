@@ -13,10 +13,11 @@ cd "$(dirname "$0")"
 # get variables from codebuild
 eval "$(aws codebuild batch-get-projects --names "blog-codebuild" \
   --query "projects[0].environment.environmentVariables" \
-  --output json | jq -r '.[] | "export \(.name)=\"\(.value)\""' )"
+  --output json | jq -r '.[] | "export \(.name)=\"\(.value)\""')"
 
-FRONTEND="$ECR_URI/frontend:latest"
-BACKEND="$ECR_URI/backend:latest"
+export IMAGE_TAG="latest"
+export FRONTEND="$ECR_URI/frontend"
+export BACKEND="$ECR_URI/backend"
 
 ################################################################################
 #                                                                              #
@@ -32,6 +33,5 @@ docker pull $BACKEND
 docker pull $FRONTEND
 
 # start docker images
-
 docker compose -f ../docker-compose.yml down
 docker compose -f ../docker-compose.yml up -d
