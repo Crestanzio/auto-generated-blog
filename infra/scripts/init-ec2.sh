@@ -3,16 +3,6 @@ set -e
 
 ################################################################################
 #                                                                              #
-#                                   VARIABLES                                  #
-#                                                                              #
-################################################################################
-
-REPO_URL="https://github.com/crestanzio/auto-generated-blog.git"
-PROJECT="blog"
-REPO_DIR="$HOME/$PROJECT"
-
-################################################################################
-#                                                                              #
 #                                 DEPENDENCIES                                 #
 #                                                                              #
 ################################################################################
@@ -51,7 +41,7 @@ if ! which docker &> /dev/null; then
   # get key
   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
   
-  # create source file
+  # add apt sources
   echo "Types: deb"                                     | sudo tee -a $file > /dev/null
   echo "URIs: https://download.docker.com/linux/ubuntu" | sudo tee -a $file > /dev/null
   echo "Suites: $ubuntu"                                | sudo tee -a $file > /dev/null
