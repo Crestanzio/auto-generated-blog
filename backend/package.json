@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "generate": "node -r dotenv/config -e 'import(\"./src/services/cron.js\").then(async mod => await mod.articleJob())'"
+    "generate": "node --env-file=../infra/.env --eval \"await import('./src/services/cron.js').then(m => m.articleJob())\""
   },
   "dependencies": {
     "better-sqlite3": "^12.5.0",

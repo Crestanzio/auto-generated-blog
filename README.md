@@ -1,0 +1,1 @@
+Add your own Hugging Face token to `infra/.env` so the API can function properly in your local environment.
